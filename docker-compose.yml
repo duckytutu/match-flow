@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: pickleball
+      POSTGRES_PASSWORD: pickleball
+      POSTGRES_DB: pickleball
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    command: npm run start:dev
+    volumes:
+      - ./backend:/usr/src/app
+    ports:
+      - '8000:8000'
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: pickleball
+      DB_PASSWORD: pickleball
+      DB_NAME: pickleball
+      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
+      NODE_ENV: development
+      PORT: 8000
+    depends_on:
+      - postgres
+
+  # frontend:
+  #   build: ./frontend
+  #   command: npm run dev
+  #   volumes:
+  #     - ./frontend:/app
+  #   ports:
+  #     - '3000:3000'
+  #   environment:
+  #     NEXT_PUBLIC_API_URL: http://backend:8000
+  #   depends_on:
+  #     - backend
+
+volumes:
+  pgdata: 

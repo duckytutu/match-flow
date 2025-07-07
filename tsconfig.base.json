@@ -1,0 +1,25 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@pickleball-poc/shared": ["libs/shared/src/index.ts"],
+      "@pickleball-poc/shared/*": ["libs/shared/src/*"],
+      "@pickleball-poc/ui": ["libs/ui/src/index.ts"],
+      "@pickleball-poc/ui/*": ["libs/ui/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+} 

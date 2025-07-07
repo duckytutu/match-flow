@@ -1,0 +1,107 @@
+{
+  "name": "backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backend/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/backend",
+        "main": "apps/backend/src/main.ts",
+        "tsConfig": "apps/backend/tsconfig.json"
+      },
+      "configurations": {
+        "development": {
+          "optimization": false
+        },
+        "production": {
+          "optimization": true
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "backend:build",
+        "port": 8000
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "backend:build:development",
+          "port": 8000
+        },
+        "production": {
+          "buildTarget": "backend:build:production",
+          "port": 8000
+        }
+      }
+    },
+    "docker:up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose up -d postgres",
+        "cwd": "."
+      }
+    },
+    "docker:down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose down",
+        "cwd": "."
+      }
+    },
+    "docker:logs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose logs -f postgres",
+        "cwd": "."
+      }
+    },
+    "serve:with-db": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "docker compose up -d postgres",
+          "sleep 5",
+          "PORT=8000 nx serve backend"
+        ],
+        "parallel": false,
+        "cwd": "."
+      }
+    },
+    "stop:all": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pkill -f 'nx serve backend' || true",
+          "docker compose down"
+        ],
+        "parallel": false,
+        "cwd": "."
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/backend/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+} 

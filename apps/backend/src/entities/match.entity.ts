@@ -9,7 +9,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { Tournament } from './tournament.entity';
+import { TournamentEvent } from './tournament-event.entity';
 import { Score } from './score.entity';
 
 export enum MatchStatus {
@@ -78,12 +78,12 @@ export class Match {
   updatedAt: Date;
 
   // Relations
-  @ManyToOne(() => Tournament, tournament => tournament.matches)
-  @JoinColumn({ name: 'tournamentId' })
-  tournament: Tournament;
+  @ManyToOne(() => TournamentEvent, event => event.matches)
+  @JoinColumn({ name: 'eventId' })
+  event: TournamentEvent;
 
   @Column()
-  tournamentId: number;
+  eventId: number;
 
   @ManyToOne(() => User, user => user.refereedMatches)
   @JoinColumn({ name: 'refereeId' })

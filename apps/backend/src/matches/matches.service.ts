@@ -30,9 +30,8 @@ export class MatchesService {
 
   findByTournament(tournamentId: number) {
     return this.matchesRepository.find({
-      where: { tournamentId },
-      relations: ['referee', 'scores'],
-      order: { matchNumber: 'ASC' },
+      where: { event: { tournamentId } },
+      relations: ['event', 'referee'],
     });
   }
 

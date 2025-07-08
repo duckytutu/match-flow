@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Registration } from './registration.entity';
 import { Tournament } from './tournament.entity';
 import { Match } from './match.entity';
+import { EventRegistration } from './event-registration.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -54,8 +54,8 @@ export class User {
   updatedAt: Date;
 
   // Relations
-  @OneToMany(() => Registration, registration => registration.user)
-  registrations: Registration[];
+  @OneToMany(() => EventRegistration, registration => registration.user)
+  eventRegistrations: EventRegistration[];
 
   @OneToMany(() => Tournament, tournament => tournament.organizer)
   organizedTournaments: Tournament[];

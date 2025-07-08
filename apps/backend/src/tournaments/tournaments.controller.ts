@@ -19,13 +19,23 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/s
 
 class CreateTournamentDto {
   name: string;
-  description: string;
+  description?: string;
   location: string;
   startDate: string;
-  endDate: string;
-  type: string;
-  maxParticipants: number;
-  entryFee: number;
+  events?: Array<{
+    name: string;
+    description?: string;
+    type: string;
+    maxTeams: number;
+    entryFee: number;
+    prizes?: string;
+    groupStagePoints?: number;
+    groupStageWinBy?: number;
+    groupStageMaxPoints?: number;
+    knockoutStagePoints?: number;
+    knockoutStageWinBy?: number;
+    knockoutStageMaxPoints?: number;
+  }>;
 }
 
 @ApiTags('tournaments')
@@ -47,10 +57,24 @@ export class TournamentsController {
           description: 'Annual spring pickleball tournament',
           location: 'City Sports Center',
           startDate: '2025-04-01',
-          endDate: '2025-04-05',
-          type: 'singles',
-          maxParticipants: 32,
-          entryFee: 25.0,
+          status: 'draft',
+          isApproved: false,
+          organizerId: 2,
+          events: [
+            {
+              type: 'singles_male',
+              maxTeams: 16,
+              entryFee: 20.0,
+              groupStagePoints: 11,
+              groupStageWinBy: 2,
+              groupStageMaxPoints: 15,
+              groupStageBo: 1,
+              knockoutStagePoints: 11,
+              knockoutStageWinBy: 2,
+              knockoutStageMaxPoints: 15,
+              knockoutStageBo: 3
+            }
+          ]
         },
       },
     },
@@ -65,13 +89,25 @@ export class TournamentsController {
         description: 'Annual spring pickleball tournament',
         location: 'City Sports Center',
         startDate: '2025-04-01T00:00:00.000Z',
-        endDate: '2025-04-05T00:00:00.000Z',
-        type: 'singles',
-        maxParticipants: 32,
-        entryFee: 25.0,
         status: 'draft',
         isApproved: false,
         organizerId: 2,
+        events: [
+          {
+            id: 1,
+            type: 'singles_male',
+            maxTeams: 16,
+            entryFee: 20.0,
+            groupStagePoints: 11,
+            groupStageWinBy: 2,
+            groupStageMaxPoints: 15,
+            groupStageBo: 1,
+            knockoutStagePoints: 11,
+            knockoutStageWinBy: 2,
+            knockoutStageMaxPoints: 15,
+            knockoutStageBo: 3
+          }
+        ],
         createdAt: '2025-03-01T12:00:00.000Z',
         updatedAt: '2025-03-01T12:00:00.000Z',
       },

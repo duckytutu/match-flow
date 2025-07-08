@@ -60,6 +60,7 @@ export class ScoresController {
         team2Score: 8,
         notes: 'Great set!',
         createdAt: '2025-04-01T10:30:00.000Z',
+        updatedAt: '2025-04-01T10:30:00.000Z',
       },
     },
   })

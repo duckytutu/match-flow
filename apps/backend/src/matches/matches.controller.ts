@@ -39,11 +39,14 @@ export class MatchesController {
       example: {
         summary: 'Create Match Example',
         value: {
-          tournamentId: 1,
+          eventId: 1,
           matchNumber: 1,
           type: 'singles',
           scheduledTime: '2025-04-01T10:00:00.000Z',
           courtNumber: 2,
+          player1Name: 'John Doe',
+          player2Name: 'Jane Smith',
+          refereeId: 3,
         },
       },
     },
@@ -54,12 +57,19 @@ export class MatchesController {
     schema: {
       example: {
         id: 1,
-        tournamentId: 1,
+        eventId: 1,
         matchNumber: 1,
         type: 'singles',
         status: 'scheduled',
         scheduledTime: '2025-04-01T10:00:00.000Z',
         courtNumber: 2,
+        player1Name: 'John Doe',
+        player2Name: 'Jane Smith',
+        refereeId: 3,
+        winner: null,
+        notes: null,
+        createdAt: '2025-04-01T10:00:00.000Z',
+        updatedAt: '2025-04-01T10:00:00.000Z',
       },
     },
   })

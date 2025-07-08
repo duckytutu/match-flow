@@ -11,8 +11,7 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get('stats')
-  @Roles(UserRole.ADMIN, UserRole.ORGANIZER)
-  async getStats() {
-    return this.adminService.getStats();
+  getStats() {
+    return this.adminService.getDashboardStats();
   }
 } 

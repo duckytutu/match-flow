@@ -9,8 +9,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { Registration } from './registration.entity';
-import { Match } from './match.entity';
+import { TournamentEvent } from './tournament-event.entity';
 
 export enum TournamentStatus {
   DRAFT = 'draft',
@@ -22,31 +21,22 @@ export enum TournamentStatus {
   CANCELLED = 'cancelled',
 }
 
-export enum TournamentType {
-  SINGLES = 'singles',
-  DOUBLES = 'doubles',
-  MIXED = 'mixed',
-}
-
 @Entity('tournaments')
 export class Tournament {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  name: string;
+  name: string; // Tên giải đấu
 
-  @Column('text')
-  description: string;
-
-  @Column()
-  location: string;
+  @Column('text', { nullable: true })
+  description: string; // Mô tả (optional)
 
   @Column()
-  startDate: Date;
+  location: string; // Địa điểm
 
   @Column()
-  endDate: Date;
+  startDate: Date; // Ngày bắt đầu
 
   @Column({
     type: 'enum',
@@ -55,30 +45,8 @@ export class Tournament {
   })
   status: TournamentStatus;
 
-  @Column({
-    type: 'enum',
-    enum: TournamentType,
-    default: TournamentType.SINGLES,
-  })
-  type: TournamentType;
-
-  @Column({ default: 0 })
-  maxParticipants: number;
-
-  @Column({ default: 0 })
-  currentParticipants: number;
-
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-  entryFee: number;
-
   @Column({ default: false })
-  isApproved: boolean;
-
-  @Column({ nullable: true })
-  rules: string;
-
-  @Column({ nullable: true })
-  prizes: string;
+  isApproved: boolean; // Phê duyệt giải đấu
 
   @CreateDateColumn()
   createdAt: Date;
@@ -94,9 +62,6 @@ export class Tournament {
   @Column()
   organizerId: number;
 
-  @OneToMany(() => Registration, registration => registration.tournament)
-  registrations: Registration[];
-
-  @OneToMany(() => Match, match => match.tournament)
-  matches: Match[];
+  @OneToMany(() => TournamentEvent, event => event.tournament)
+  events: TournamentEvent[];
 } 

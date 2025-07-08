@@ -23,20 +23,18 @@
       }
     },
     "serve": {
-      "executor": "@nx/js:node",
+      "executor": "nx:run-commands",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "backend:build",
-        "port": 8000
+        "command": "nest start --watch",
+        "cwd": "apps/backend"
       },
       "configurations": {
         "development": {
-          "buildTarget": "backend:build:development",
-          "port": 8000
+          "command": "nest start --watch"
         },
         "production": {
-          "buildTarget": "backend:build:production",
-          "port": 8000
+          "command": "nest start"
         }
       }
     },

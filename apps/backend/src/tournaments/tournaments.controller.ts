@@ -16,6 +16,7 @@ import { TournamentsService } from './tournaments.service';
 import { Tournament, TournamentStatus } from '../entities/tournament.entity';
 import { UserRole } from '../entities/user.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { Public } from '../auth/roles.decorator';
 
 class CreateTournamentDto {
   name: string;
@@ -121,6 +122,7 @@ export class TournamentsController {
   }
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'Get all approved tournaments' })
   @ApiResponse({
     status: 200,
@@ -171,6 +173,7 @@ export class TournamentsController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Get tournament by ID' })
   @ApiParam({ name: 'id', example: 1 })
   @ApiResponse({

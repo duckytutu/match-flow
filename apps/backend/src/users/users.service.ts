@@ -27,8 +27,9 @@ export class UsersService {
     return this.usersRepository.findOneBy({ email });
   }
 
-  update(id: number, data: Partial<User>) {
-    return this.usersRepository.update(id, data);
+  async update(id: number, data: Partial<User>) {
+    await this.usersRepository.update(id, data);
+    return this.usersRepository.findOneBy({ id });
   }
 
   remove(id: number) {
@@ -43,5 +44,27 @@ export class UsersService {
     
     user.isApproved = true;
     return this.usersRepository.save(user);
+  }
+
+  async searchAthletes(search: string, excludeUserId?: number) {
+    const query = this.usersRepository
+      .createQueryBuilder('user')
+      .select(['user.id', 'user.firstName', 'user.lastName', 'user.email', 'user.levelPoint'])
+      .where('user.role = :role', { role: 'athlete' })
+      .andWhere('user.isApproved = :isApproved', { isApproved: true });
+
+    // Exclude current user if provided
+    if (excludeUserId) {
+      query.andWhere('user.id != :excludeUserId', { excludeUserId });
+    }
+
+    if (search && search.trim()) {
+      query.andWhere(
+        '(user.firstName ILIKE :search OR user.lastName ILIKE :search OR user.email ILIKE :search)',
+        { search: `%${search.trim()}%` }
+      );
+    }
+
+    return query.limit(10).getMany();
   }
 } 

@@ -44,8 +44,11 @@ export class User {
   @Column({ nullable: true })
   dateOfBirth: Date;
 
+  @Column({ nullable: true, type: 'decimal', precision: 6, scale: 3 })
+  levelPoint: number; // Điểm trình độ (ví dụ: 3.5, 4.0, 4.5)
+
   @Column({ nullable: true })
-  skillLevel: string;
+  pointSource: string; // 'self_rated' hoặc 'sport_connect'
 
   @CreateDateColumn()
   createdAt: Date;

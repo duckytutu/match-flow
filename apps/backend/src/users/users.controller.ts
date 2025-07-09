@@ -7,13 +7,16 @@ import {
   Patch,
   Delete,
   UseGuards,
+  Request,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UsersService } from './users.service';
 import { User, UserRole } from '../entities/user.entity';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 class CreateUserDto {
   email: string;
@@ -72,6 +75,103 @@ export class UsersController {
   })
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get('athletes')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.ORGANIZER, UserRole.REFEREE, UserRole.ATHLETE, UserRole.GUEST)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Search athletes for team registration' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of athletes matching search criteria',
+    schema: {
+      example: [
+        {
+          id: 1,
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john@example.com',
+          levelPoint: 3.5
+        }
+      ]
+    }
+  })
+  searchAthletes(@Request() req, @Query('search') search: string) {
+    return this.usersService.searchAthletes(search, req.user.id);
+  }
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.ORGANIZER, UserRole.REFEREE, UserRole.ATHLETE, UserRole.GUEST)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved successfully',
+    schema: {
+      example: {
+        id: 1,
+        email: 'athlete@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        role: 'athlete',
+        isApproved: true,
+        phoneNumber: '+1234567890',
+        dateOfBirth: '1990-01-01',
+        skillLevel: 'Intermediate',
+        levelPoint: 3.5,
+        pointSource: 'self_rated',
+        createdAt: '2025-01-01T00:00:00.000Z',
+        updatedAt: '2025-01-01T00:00:00.000Z'
+      }
+    }
+  })
+  getProfile(@Request() req) {
+    return this.usersService.findOne(req.user.id);
+  }
+
+  @Patch('profile')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.ORGANIZER, UserRole.REFEREE, UserRole.ATHLETE, UserRole.GUEST)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiBody({
+    schema: {
+      example: {
+        firstName: 'John',
+        lastName: 'Doe',
+        phoneNumber: '+1234567890',
+        dateOfBirth: '1990-01-01',
+        skillLevel: 'Intermediate',
+        levelPoint: 3.5,
+        pointSource: 'self_rated'
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Profile updated successfully',
+    schema: {
+      example: {
+        id: 1,
+        email: 'athlete@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        role: 'athlete',
+        isApproved: true,
+        phoneNumber: '+1234567890',
+        dateOfBirth: '1990-01-01',
+        skillLevel: 'Intermediate',
+        levelPoint: 3.5,
+        pointSource: 'self_rated',
+        createdAt: '2025-01-01T00:00:00.000Z',
+        updatedAt: '2025-01-01T00:00:00.000Z'
+      }
+    }
+  })
+  updateProfile(@Request() req, @Body() updateUserDto: Partial<User>) {
+    return this.usersService.update(req.user.id, updateUserDto);
   }
 
   @Get(':id')
@@ -146,4 +246,6 @@ export class UsersController {
   approve(@Param('id') id: string) {
     return this.usersService.approve(Number(id));
   }
+
+
 } 

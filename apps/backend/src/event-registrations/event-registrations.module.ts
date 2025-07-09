@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventRegistrationsService } from './event-registrations.service';
 import { EventRegistrationsController } from './event-registrations.controller';
 import { EventRegistration } from '../entities/event-registration.entity';
+import { TournamentEventsModule } from '../tournament-events/tournament-events.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EventRegistration])],
+  imports: [TypeOrmModule.forFeature([EventRegistration]), TournamentEventsModule],
   providers: [EventRegistrationsService],
   controllers: [EventRegistrationsController],
   exports: [EventRegistrationsService],

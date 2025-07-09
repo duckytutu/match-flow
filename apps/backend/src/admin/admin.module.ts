@@ -4,7 +4,6 @@ import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
 import { Tournament } from '../entities/tournament.entity';
 import { User } from '../entities/user.entity';
-// import { Registration } from '../entities/registration.entity';
 import { EventRegistration } from '../entities/event-registration.entity';
 import { TournamentEvent } from '../entities/tournament-event.entity';
 

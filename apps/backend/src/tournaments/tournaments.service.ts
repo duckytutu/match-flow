@@ -37,28 +37,28 @@ export class TournamentsService {
   findAll() {
     return this.tournamentsRepository.find({
       where: { isApproved: true },
-      relations: ['organizer', 'events'],
+      relations: ['organizer', 'events', 'events.registrations', 'events.registrations.user', 'events.registrations.teammate'],
     });
   }
 
   findPendingApproval() {
     return this.tournamentsRepository.find({
       where: { isApproved: false },
-      relations: ['organizer', 'events'],
+      relations: ['organizer', 'events', 'events.registrations', 'events.registrations.user', 'events.registrations.teammate'],
     });
   }
 
   findOne(id: number) {
     return this.tournamentsRepository.findOne({
       where: { id },
-      relations: ['organizer', 'events', 'events.registrations'],
+      relations: ['organizer', 'events', 'events.registrations', 'events.registrations.user', 'events.registrations.teammate'],
     });
   }
 
   findByOrganizer(organizerId: number) {
     return this.tournamentsRepository.find({
       where: { organizerId },
-      relations: ['organizer', 'events'],
+      relations: ['organizer', 'events', 'events.registrations', 'events.registrations.user', 'events.registrations.teammate'],
     });
   }
 

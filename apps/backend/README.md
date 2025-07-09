@@ -17,13 +17,37 @@ A NestJS backend for managing pickleball tournaments with role-based access cont
 - **Organizer**: Can create and manage tournaments, assign referees
 - **Referee**: Can update match scores and manage assigned matches
 - **Athlete**: Can register for tournaments and view results
-- **Guest**: Can register for tournaments and view public information
+- **Guest**: Can view public information without authentication
 
-## API Endpoints
+## Public Routes (No Authentication Required)
+
+The following routes are accessible without authentication:
+
+### Tournaments
+- `GET /tournaments` - Get all approved tournaments (Public)
+- `GET /tournaments/:id` - Get tournament by ID (Public)
+
+### Tournament Events
+- `GET /tournament-events/tournament/:tournamentId` - Get events by tournament (Public)
+- `GET /tournament-events/:id` - Get tournament event by ID (Public)
+
+### Matches
+- `GET /matches` - Get all matches (Public)
+- `GET /matches/:id` - Get match by ID (Public)
+
+### Scores
+- `GET /scores` - Get all scores (Public)
+- `GET /scores/:id` - Get score by ID (Public)
+
+## Protected Routes (Authentication Required)
+
+The following routes require authentication and specific roles:
 
 ### Authentication
 - `POST /auth/register` - Register a new user
 - `POST /auth/login` - Login and get JWT token
+- `POST /auth/logout` - Logout user (requires auth)
+- `GET /auth/me` - Get current user info (requires auth)
 
 ### Users
 - `GET /users` - Get all users (Admin, Organizer)
@@ -31,204 +55,45 @@ A NestJS backend for managing pickleball tournaments with role-based access cont
 - `POST /users` - Create user (Admin)
 - `PATCH /users/:id` - Update user (Admin)
 - `DELETE /users/:id` - Delete user (Admin)
+- `PATCH /users/:id/approve` - Approve user (Admin)
 
-### Tournaments
-- `GET /tournaments` - Get all tournaments (Public)
-- `GET /tournaments/:id` - Get tournament by ID (Public)
+### Tournaments (Protected Operations)
 - `POST /tournaments` - Create tournament (Organizer, Admin)
-  - Sample request:
-    ```json
-    {
-      "name": "Spring Open",
-      "description": "Annual spring pickleball tournament",
-      "location": "City Sports Center",
-      "startDate": "2025-04-01",
-      "status": "draft",
-      "isApproved": false,
-      "organizerId": 2,
-      "events": [
-        {
-          "type": "singles_male",
-          "maxTeams": 16,
-          "entryFee": 20.0,
-          "groupStagePoints": 11,
-          "groupStageWinBy": 2,
-          "groupStageMaxPoints": 15,
-          "groupStageBo": 1,
-          "knockoutStagePoints": 11,
-          "knockoutStageWinBy": 2,
-          "knockoutStageMaxPoints": 15,
-          "knockoutStageBo": 3
-        }
-      ]
-    }
-    ```
-  - Sample response:
-    ```json
-    {
-      "id": 1,
-      "name": "Spring Open",
-      "description": "Annual spring pickleball tournament",
-      "location": "City Sports Center",
-      "startDate": "2025-04-01T00:00:00.000Z",
-      "status": "draft",
-      "isApproved": false,
-      "organizerId": 2,
-      "events": [
-        {
-          "id": 1,
-          "type": "singles_male",
-          "maxTeams": 16,
-          "entryFee": 20.0,
-          "groupStagePoints": 11,
-          "groupStageWinBy": 2,
-          "groupStageMaxPoints": 15,
-          "groupStageBo": 1,
-          "knockoutStagePoints": 11,
-          "knockoutStageWinBy": 2,
-          "knockoutStageMaxPoints": 15,
-          "knockoutStageBo": 3
-        }
-      ],
-      "createdAt": "2025-03-01T12:00:00.000Z",
-      "updatedAt": "2025-03-01T12:00:00.000Z"
-    }
-    ```
+- `PATCH /tournaments/:id` - Update tournament (Organizer, Admin)
+- `DELETE /tournaments/:id` - Delete tournament (Organizer, Admin)
+- `GET /tournaments/pending` - Get tournaments pending approval (Admin)
+- `PATCH /tournaments/:id/approve` - Approve tournament (Admin)
+- `PATCH /tournaments/:id/reject` - Reject tournament (Admin)
+- `PATCH /tournaments/:id/request-info` - Request more info (Admin)
+- `GET /tournaments/organizer/:organizerId` - Get tournaments by organizer (Organizer, Admin)
 
-### Tournament Events
-- `POST /tournament-events` - Create tournament event
-  - Sample request:
-    ```json
-    {
-      "tournamentId": 1,
-      "type": "doubles_male",
-      "maxTeams": 16,
-      "entryFee": 30.0,
-      "prizes": "Medals, Trophies",
-      "groupStagePoints": 11,
-      "groupStageWinBy": 2,
-      "groupStageMaxPoints": 15,
-      "groupStageBo": 1,
-      "knockoutStagePoints": 11,
-      "knockoutStageWinBy": 2,
-      "knockoutStageMaxPoints": 15,
-      "knockoutStageBo": 3
-    }
-    ```
-  - Sample response:
-    ```json
-    {
-      "id": 1,
-      "tournamentId": 1,
-      "type": "doubles_male",
-      "maxTeams": 16,
-      "entryFee": 30.0,
-      "prizes": "Medals, Trophies",
-      "groupStagePoints": 11,
-      "groupStageWinBy": 2,
-      "groupStageMaxPoints": 15,
-      "groupStageBo": 1,
-      "knockoutStagePoints": 11,
-      "knockoutStageWinBy": 2,
-      "knockoutStageMaxPoints": 15,
-      "knockoutStageBo": 3,
-      "createdAt": "2025-04-01T10:00:00.000Z",
-      "updatedAt": "2025-04-01T10:00:00.000Z"
-    }
-    ```
+### Tournament Events (Protected Operations)
+- `POST /tournament-events` - Create tournament event (Organizer, Admin)
+- `PATCH /tournament-events/:id` - Update tournament event (Organizer, Admin)
+- `DELETE /tournament-events/:id` - Delete tournament event (Organizer, Admin)
 
 ### Event Registrations
-- `POST /event-registrations` - Register for event
-  - Sample request:
-    ```json
-    {
-      "eventId": 1,
-      "teamName": "Team Alpha",
-      "notes": "Looking forward to the event!",
-      "teamMembers": "[{\"name\":\"John Doe\",\"age\":25},{\"name\":\"Jane Smith\",\"age\":24}]"
-    }
-    ```
-  - Sample response:
-    ```json
-    {
-      "id": 1,
-      "eventId": 1,
-      "userId": 2,
-      "status": "pending",
-      "teamName": "Team Alpha",
-      "notes": "Looking forward to the event!",
-      "paidAmount": 0,
-      "isPaid": false,
-      "teamMembers": "[{\"name\":\"John Doe\",\"age\":25},{\"name\":\"Jane Smith\",\"age\":24}]",
-      "createdAt": "2025-04-01T10:00:00.000Z",
-      "updatedAt": "2025-04-01T10:00:00.000Z"
-    }
-    ```
+- `POST /event-registrations` - Register for event (Athlete, Guest)
+- `GET /event-registrations/event/:eventId` - Get registrations by event (Admin, Organizer)
+- `GET /event-registrations/user/:userId` - Get registrations by user (Admin, Organizer)
+- `GET /event-registrations/:id` - Get registration by ID (Admin, Organizer)
+- `PATCH /event-registrations/:id` - Update registration (Admin, Organizer)
+- `DELETE /event-registrations/:id` - Delete registration (Admin, Organizer)
 
-### Matches
-- `GET /matches` - Get all matches (Public)
-- `GET /matches/:id` - Get match by ID (Public)
-- `POST /matches` - Create match
-  - Sample request:
-    ```json
-    {
-      "eventId": 1,
-      "matchNumber": 1,
-      "type": "singles",
-      "scheduledTime": "2025-04-01T10:00:00.000Z",
-      "courtNumber": 2,
-      "player1Name": "John Doe",
-      "player2Name": "Jane Smith",
-      "refereeId": 3
-    }
-    ```
-  - Sample response:
-    ```json
-    {
-      "id": 1,
-      "eventId": 1,
-      "matchNumber": 1,
-      "type": "singles",
-      "status": "scheduled",
-      "scheduledTime": "2025-04-01T10:00:00.000Z",
-      "courtNumber": 2,
-      "player1Name": "John Doe",
-      "player2Name": "Jane Smith",
-      "refereeId": 3,
-      "winner": null,
-      "notes": null,
-      "createdAt": "2025-04-01T10:00:00.000Z",
-      "updatedAt": "2025-04-01T10:00:00.000Z"
-    }
-    ```
+### Matches (Protected Operations)
+- `POST /matches` - Create match (Organizer, Admin)
+- `PATCH /matches/:id` - Update match (Referee, Organizer, Admin)
+- `PATCH /matches/:id/assign-referee` - Assign referee to match (Organizer, Admin)
+- `PATCH /matches/:id/status` - Update match status (Referee, Organizer, Admin)
+- `DELETE /matches/:id` - Delete match (Organizer, Admin)
+- `GET /matches/tournament/:tournamentId` - Get matches by tournament (Public)
+- `GET /matches/referee/:refereeId` - Get matches by referee (Referee, Organizer, Admin)
 
-### Scores
-- `GET /scores` - Get all scores (Public)
-- `GET /scores/:id` - Get score by ID (Public)
-- `POST /scores` - Create score
-  - Sample request:
-    ```json
-    {
-      "matchId": 1,
-      "setNumber": 1,
-      "team1Score": 11,
-      "team2Score": 8,
-      "notes": "Great set!"
-    }
-    ```
-  - Sample response:
-    ```json
-    {
-      "id": 1,
-      "matchId": 1,
-      "setNumber": 1,
-      "team1Score": 11,
-      "team2Score": 8,
-      "notes": "Great set!",
-      "createdAt": "2025-04-01T10:30:00.000Z",
-      "updatedAt": "2025-04-01T10:30:00.000Z"
-    }
-    ```
+### Scores (Protected Operations)
+- `POST /scores` - Create score (Referee, Organizer, Admin)
+- `PATCH /scores/:id` - Update score (Referee, Organizer, Admin)
+- `DELETE /scores/:id` - Delete score (Referee, Organizer, Admin)
+- `GET /scores/match/:matchId` - Get scores by match (Public)
 
 ### Admin
 - `GET /admin/stats` - Get system statistics (Admin, Organizer)

@@ -41,8 +41,8 @@ export class EventRegistration {
   @Column({ default: false })
   isPaid: boolean; // Đã thanh toán chưa
 
-  @Column({ type: 'text', nullable: true })
-  teamMembers: string; // JSON string chứa thông tin thành viên đội
+  @Column({ nullable: true })
+  teammateId: number; // ID của đồng đội (cho nội dung đôi)
 
   @CreateDateColumn()
   createdAt: Date;
@@ -57,6 +57,10 @@ export class EventRegistration {
 
   @Column()
   userId: number;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'teammateId' })
+  teammate: User;
 
   @ManyToOne(() => TournamentEvent, event => event.registrations)
   @JoinColumn({ name: 'eventId' })

@@ -15,6 +15,7 @@ import { ScoresService } from './scores.service';
 import { Score } from '../entities/score.entity';
 import { UserRole } from '../entities/user.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { Public } from '../auth/roles.decorator';
 
 class CreateScoreDto {
   matchId: number;
@@ -69,6 +70,7 @@ export class ScoresController {
   }
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'Get all scores' })
   @ApiResponse({
     status: 200,
@@ -90,6 +92,7 @@ export class ScoresController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Get score by ID' })
   @ApiParam({ name: 'id', example: 1 })
   @ApiResponse({

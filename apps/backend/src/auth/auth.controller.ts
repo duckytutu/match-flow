@@ -27,7 +27,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  @ApiOperation({ summary: 'Register a new user' })
+  @ApiOperation({ summary: 'Register a new user (requires admin approval)' })
   @ApiBody({
     type: RegisterDto,
     examples: {
@@ -42,7 +42,21 @@ export class AuthController {
       },
     },
   })
-  @ApiResponse({ status: 201, description: 'User registered successfully' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'User registered successfully, waiting for admin approval',
+    schema: {
+      example: {
+        id: 1,
+        email: 'user@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        role: 'athlete',
+        isApproved: false,
+        message: 'Registration successful. Please wait for admin approval before you can login.'
+      },
+    },
+  })
   register(@Body() data: RegisterDto) {
     return this.authService.register(data);
   }

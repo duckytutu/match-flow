@@ -6,6 +6,7 @@ import { TournamentEventsService } from './tournament-events.service';
 import { TournamentEvent } from '../entities/tournament-event.entity';
 import { UserRole } from '../entities/user.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { Public } from '../auth/roles.decorator';
 
 class CreateEventDto {
   name: string;
@@ -83,12 +84,14 @@ export class TournamentEventsController {
   }
 
   @Get('tournament/:tournamentId')
+  @Public()
   @ApiOperation({ summary: 'Get events by tournament' })
   findByTournament(@Param('tournamentId') tournamentId: string) {
     return this.tournamentEventsService.findByTournament(Number(tournamentId));
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Get tournament event by ID' })
   findOne(@Param('id') id: string) {
     return this.tournamentEventsService.findOne(Number(id));

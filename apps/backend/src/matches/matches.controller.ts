@@ -15,6 +15,7 @@ import { MatchesService } from './matches.service';
 import { Match } from '../entities/match.entity';
 import { UserRole } from '../entities/user.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { Public } from '../auth/roles.decorator';
 
 class CreateMatchDto {
   tournamentId: number;
@@ -78,6 +79,7 @@ export class MatchesController {
   }
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'Get all matches' })
   @ApiResponse({
     status: 200,
@@ -99,6 +101,7 @@ export class MatchesController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Get match by ID' })
   @ApiParam({ name: 'id', example: 1 })
   @ApiResponse({

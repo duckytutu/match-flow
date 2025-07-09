@@ -25,10 +25,16 @@ export class AuthService {
     const user = await this.usersService.create({
       ...data,
       password: hashed,
-      role: data.role || UserRole.GUEST,
-      isApproved: data.role === UserRole.ORGANIZER ? false : true,
+      role: data.role || UserRole.ATHLETE, // Default to ATHLETE instead of GUEST
+      isApproved: false, // All new users need admin approval
     });
-    return user;
+    
+    // Return user without password, with approval status message
+    const { password, ...userWithoutPassword } = user;
+    return {
+      ...userWithoutPassword,
+      message: 'Registration successful. Please wait for admin approval before you can login.'
+    };
   }
 
   async validateUser(email: string, password: string) {
@@ -37,8 +43,10 @@ export class AuthService {
     if (!user) return null;
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return null;
-    if (user.role === UserRole.ORGANIZER && !user.isApproved) {
-      throw new UnauthorizedException('Organizer account not approved');
+    
+    // Check if user is approved (for all roles except ADMIN)
+    if (user.role !== UserRole.ADMIN && !user.isApproved) {
+      throw new UnauthorizedException('Account not approved. Please wait for admin approval.');
     }
     return user;
   }
@@ -50,6 +58,18 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
       user,
+    };
+  }
+
+  // Method to create guest user for public routes
+  createGuestUser() {
+    return {
+      id: 0,
+      email: 'guest@example.com',
+      firstName: 'Guest',
+      lastName: 'User',
+      role: UserRole.GUEST,
+      isApproved: true,
     };
   }
 }

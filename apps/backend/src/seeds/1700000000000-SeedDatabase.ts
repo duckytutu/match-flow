@@ -93,6 +93,63 @@ export class SeedDatabase1700000000000 implements MigrationInterface {
     `, ['Bùi', 'Thị H', 'athlete6@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 4.7, new Date(), new Date()]);
     const athlete6Id = athlete6Result[0].id;
 
+    // Create additional athletes for more teams
+    const additionalAthletes = await Promise.all([
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Nguyễn', 'Văn I', 'athlete7@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 4.1, new Date(), new Date()]),
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Trần', 'Thị J', 'athlete8@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 4.3, new Date(), new Date()]),
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Lê', 'Văn K', 'athlete9@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 3.9, new Date(), new Date()]),
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Phạm', 'Thị L', 'athlete10@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 4.4, new Date(), new Date()]),
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Hoàng', 'Văn M', 'athlete11@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 4.0, new Date(), new Date()]),
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Vũ', 'Thị N', 'athlete12@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 4.6, new Date(), new Date()]),
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Đặng', 'Văn O', 'athlete13@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 3.7, new Date(), new Date()]),
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Bùi', 'Thị P', 'athlete14@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 4.2, new Date(), new Date()]),
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Nguyễn', 'Văn Q', 'athlete15@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 3.8, new Date(), new Date()]),
+      queryRunner.query(`
+        INSERT INTO "users" ("firstName", "lastName", "email", "password", "role", "isApproved", "levelPoint", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING "id"
+      `, ['Trần', 'Thị R', 'athlete16@pickleball.com', hashedPassword, UserRole.ATHLETE, true, 4.5, new Date(), new Date()])
+    ]);
+
+    const additionalAthleteIds = additionalAthletes.map(result => result[0].id);
+    const allAthleteIds = [athlete1Id, athlete2Id, athlete3Id, athlete4Id, athlete5Id, athlete6Id, ...additionalAthleteIds];
+
     // Create tournaments
     console.log('🏆 Creating tournaments...');
     
@@ -209,93 +266,165 @@ export class SeedDatabase1700000000000 implements MigrationInterface {
     // Create event registrations with different statuses
     console.log('📝 Creating event registrations...');
     
-    // Tournament 1 - Event 1 (Singles Male) - Approved registrations
-    await Promise.all([
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      `, [event1Ids[0], athlete1Id, EventRegistrationStatus.APPROVED, 'Rất mong được tham gia giải đấu!', 200000, true, new Date(), new Date()]),
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      `, [event1Ids[0], athlete2Id, EventRegistrationStatus.APPROVED, 'Hẹn gặp lại tại giải đấu!', 200000, true, new Date(), new Date()]),
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "status", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `, [event1Ids[0], athlete3Id, EventRegistrationStatus.APPROVED, 200000, true, new Date(), new Date()])
-    ]);
+    // Tournament 1 - Event 1 (Singles Male) - 32 teams (max capacity) - FULLY APPROVED
+    const singlesMaleRegistrations: Promise<any>[] = [];
+    for (let i = 0; i < 32; i++) {
+      const status = EventRegistrationStatus.APPROVED; // Tất cả đều approved
+      const isPaid = true; // Tất cả đều đã thanh toán
+      const paidAmount = 200000;
+      
+      singlesMaleRegistrations.push(
+        queryRunner.query(`
+          INSERT INTO "event_registrations" ("eventId", "userId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `, [event1Ids[0], allAthleteIds[i % allAthleteIds.length], status, 
+            `Đăng ký tham gia giải đấu - VĐV ${i + 1}`, paidAmount, isPaid, new Date(), new Date()])
+      );
+    }
+    await Promise.all(singlesMaleRegistrations);
 
-    // Tournament 1 - Event 1 (Singles Male) - Pending registrations
-    await Promise.all([
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      `, [event1Ids[0], athlete4Id, EventRegistrationStatus.PENDING, 'Xin chào, tôi muốn đăng ký tham gia giải đấu này.', 0, false, new Date(), new Date()]),
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "status", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `, [event1Ids[0], athlete5Id, EventRegistrationStatus.PENDING, 0, false, new Date(), new Date()])
-    ]);
+    // Tournament 1 - Event 2 (Singles Female) - 24 teams (max capacity) - FULLY APPROVED
+    const singlesFemaleRegistrations: Promise<any>[] = [];
+    for (let i = 0; i < 24; i++) {
+      const status = EventRegistrationStatus.APPROVED; // Tất cả đều approved
+      const isPaid = true; // Tất cả đều đã thanh toán
+      const paidAmount = 200000;
+      
+      singlesFemaleRegistrations.push(
+        queryRunner.query(`
+          INSERT INTO "event_registrations" ("eventId", "userId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `, [event1Ids[1], allAthleteIds[i % allAthleteIds.length], status, 
+            `Đăng ký nữ đơn - VĐV ${i + 1}`, paidAmount, isPaid, new Date(), new Date()])
+      );
+    }
+    await Promise.all(singlesFemaleRegistrations);
 
-    // Tournament 1 - Event 1 (Singles Male) - Rejected registration
-    await queryRunner.query(`
-      INSERT INTO "event_registrations" ("eventId", "userId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    `, [event1Ids[0], athlete6Id, EventRegistrationStatus.REJECTED, 'Đăng ký không hợp lệ', 0, false, new Date(), new Date()]);
+    // Tournament 1 - Event 3 (Doubles Male) - 16 teams (max capacity) - FULLY APPROVED
+    const doublesMaleRegistrations: Promise<any>[] = [];
+    for (let i = 0; i < 16; i++) {
+      const status = EventRegistrationStatus.APPROVED; // Tất cả đều approved
+      const isPaid = true; // Tất cả đều đã thanh toán
+      const paidAmount = 300000;
+      
+      const player1Index = i * 2;
+      const player2Index = i * 2 + 1;
+      
+      doublesMaleRegistrations.push(
+        queryRunner.query(`
+          INSERT INTO "event_registrations" ("eventId", "userId", "teammateId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `, [event1Ids[2], allAthleteIds[player1Index % allAthleteIds.length], 
+            allAthleteIds[player2Index % allAthleteIds.length], status, 
+            `Đội đôi nam ${i + 1}`, paidAmount, isPaid, new Date(), new Date()])
+      );
+    }
+    await Promise.all(doublesMaleRegistrations);
 
-    // Tournament 1 - Event 2 (Singles Female) - Mixed statuses
-    await Promise.all([
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "status", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `, [event1Ids[1], athlete2Id, EventRegistrationStatus.APPROVED, 200000, true, new Date(), new Date()]),
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      `, [event1Ids[1], athlete4Id, EventRegistrationStatus.PENDING, 'Chờ phê duyệt', 0, false, new Date(), new Date()])
-    ]);
+    // Tournament 1 - Event 4 (Doubles Female) - 12 teams (max capacity)
+    const doublesFemaleRegistrations: Promise<any>[] = [];
+    for (let i = 0; i < 12; i++) {
+      const status = i < 8 ? EventRegistrationStatus.APPROVED : 
+                    i < 10 ? EventRegistrationStatus.PENDING : 
+                    EventRegistrationStatus.REJECTED;
+      const isPaid = status === EventRegistrationStatus.APPROVED;
+      const paidAmount = isPaid ? 300000 : 0;
+      
+      const player1Index = i * 2;
+      const player2Index = i * 2 + 1;
+      
+      doublesFemaleRegistrations.push(
+        queryRunner.query(`
+          INSERT INTO "event_registrations" ("eventId", "userId", "teammateId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `, [event1Ids[3], allAthleteIds[player1Index % allAthleteIds.length], 
+            allAthleteIds[player2Index % allAthleteIds.length], status, 
+            `Đội đôi nữ ${i + 1}`, paidAmount, isPaid, new Date(), new Date()])
+      );
+    }
+    await Promise.all(doublesFemaleRegistrations);
 
-    // Tournament 1 - Event 3 (Doubles Male) - With teammates
-    await Promise.all([
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "teammateId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      `, [event1Ids[2], athlete1Id, athlete2Id, EventRegistrationStatus.APPROVED, 'Đội mạnh nhất giải đấu!', 300000, true, new Date(), new Date()]),
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "teammateId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      `, [event1Ids[2], athlete3Id, athlete5Id, EventRegistrationStatus.PENDING, 'Đăng ký đôi nam', 0, false, new Date(), new Date()])
-    ]);
+    // Tournament 1 - Event 5 (Doubles Mixed) - 20 teams (max capacity)
+    const doublesMixedRegistrations: Promise<any>[] = [];
+    for (let i = 0; i < 20; i++) {
+      const status = i < 15 ? EventRegistrationStatus.APPROVED : 
+                    i < 18 ? EventRegistrationStatus.PENDING : 
+                    EventRegistrationStatus.REJECTED;
+      const isPaid = status === EventRegistrationStatus.APPROVED;
+      const paidAmount = isPaid ? 300000 : 0;
+      
+      const player1Index = i * 2;
+      const player2Index = i * 2 + 1;
+      
+      doublesMixedRegistrations.push(
+        queryRunner.query(`
+          INSERT INTO "event_registrations" ("eventId", "userId", "teammateId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `, [event1Ids[4], allAthleteIds[player1Index % allAthleteIds.length], 
+            allAthleteIds[player2Index % allAthleteIds.length], status, 
+            `Đội đôi nam nữ ${i + 1}`, paidAmount, isPaid, new Date(), new Date()])
+      );
+    }
+    await Promise.all(doublesMixedRegistrations);
 
-    // Tournament 1 - Event 5 (Doubles Mixed) - Mixed statuses
-    await Promise.all([
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "teammateId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      `, [event1Ids[4], athlete1Id, athlete4Id, EventRegistrationStatus.APPROVED, 'Đội nam nữ xuất sắc', 300000, true, new Date(), new Date()]),
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "teammateId", "status", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      `, [event1Ids[4], athlete2Id, athlete6Id, EventRegistrationStatus.PENDING, 0, false, new Date(), new Date()])
-    ]);
+    // Tournament 2 - Event 1 (Singles Male) - 24 teams (max capacity) - FULLY APPROVED
+    const tournament2SinglesMaleRegistrations: Promise<any>[] = [];
+    for (let i = 0; i < 24; i++) {
+      const status = EventRegistrationStatus.APPROVED; // Tất cả đều approved
+      const isPaid = true; // Tất cả đều đã thanh toán
+      const paidAmount = 180000;
+      
+      tournament2SinglesMaleRegistrations.push(
+        queryRunner.query(`
+          INSERT INTO "event_registrations" ("eventId", "userId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `, [event2Ids[0], allAthleteIds[i % allAthleteIds.length], status, 
+            `Đăng ký TP.HCM - VĐV ${i + 1}`, paidAmount, isPaid, new Date(), new Date()])
+      );
+    }
+    await Promise.all(tournament2SinglesMaleRegistrations);
 
-    // Tournament 2 - Event 1 (Singles Male) - Approved
-    await Promise.all([
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "status", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `, [event2Ids[0], athlete1Id, EventRegistrationStatus.APPROVED, 180000, true, new Date(), new Date()]),
-      queryRunner.query(`
-        INSERT INTO "event_registrations" ("eventId", "userId", "status", "paidAmount", "isPaid", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `, [event2Ids[0], athlete3Id, EventRegistrationStatus.PENDING, 0, false, new Date(), new Date()])
-    ]);
+    // Tournament 2 - Event 2 (Doubles Mixed) - 16 teams (max capacity)
+    const tournament2DoublesMixedRegistrations: Promise<any>[] = [];
+    for (let i = 0; i < 16; i++) {
+      const status = i < 12 ? EventRegistrationStatus.APPROVED : 
+                    i < 14 ? EventRegistrationStatus.PENDING : 
+                    EventRegistrationStatus.REJECTED;
+      const isPaid = status === EventRegistrationStatus.APPROVED;
+      const paidAmount = isPaid ? 250000 : 0;
+      
+      const player1Index = i * 2;
+      const player2Index = i * 2 + 1;
+      
+      tournament2DoublesMixedRegistrations.push(
+        queryRunner.query(`
+          INSERT INTO "event_registrations" ("eventId", "userId", "teammateId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `, [event2Ids[1], allAthleteIds[player1Index % allAthleteIds.length], 
+            allAthleteIds[player2Index % allAthleteIds.length], status, 
+            `Đội TP.HCM ${i + 1}`, paidAmount, isPaid, new Date(), new Date()])
+      );
+    }
+    await Promise.all(tournament2DoublesMixedRegistrations);
 
-    // Tournament 2 - Event 2 (Doubles Mixed) - Approved
-    await queryRunner.query(`
-      INSERT INTO "event_registrations" ("eventId", "userId", "teammateId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-    `, [event2Ids[1], athlete1Id, athlete4Id, EventRegistrationStatus.APPROVED, 'Đội mạnh TP.HCM', 250000, true, new Date(), new Date()]);
+    // Tournament 3 - Event 1 (Singles Male) - 16 teams (max capacity)
+    const tournament3SinglesMaleRegistrations: Promise<any>[] = [];
+    for (let i = 0; i < 16; i++) {
+      const status = i < 12 ? EventRegistrationStatus.APPROVED : 
+                    i < 14 ? EventRegistrationStatus.PENDING : 
+                    EventRegistrationStatus.REJECTED;
+      const isPaid = status === EventRegistrationStatus.APPROVED;
+      const paidAmount = isPaid ? 150000 : 0;
+      
+      tournament3SinglesMaleRegistrations.push(
+        queryRunner.query(`
+          INSERT INTO "event_registrations" ("eventId", "userId", "status", "notes", "paidAmount", "isPaid", "createdAt", "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `, [event3Ids[0], allAthleteIds[i % allAthleteIds.length], status, 
+            `Đăng ký Đà Nẵng - VĐV ${i + 1}`, paidAmount, isPaid, new Date(), new Date()])
+      );
+    }
+    await Promise.all(tournament3SinglesMaleRegistrations);
 
     // Update currentTeams for all events
     console.log('🔄 Updating current teams count...');
@@ -317,10 +446,20 @@ export class SeedDatabase1700000000000 implements MigrationInterface {
 
     console.log('✅ Database seeding completed successfully!');
     console.log('\n📊 Summary:');
-    console.log('- Users created: 10');
+    console.log('- Users created: 16');
     console.log('- Tournaments created: 3');
     console.log('- Events created: 8');
-    console.log('- Registrations created: 15+');
+    console.log('- Registrations created: 140+ (full capacity for all events)');
+    console.log('\n🏆 Events đã đầy đủ đội thi đấu và sẵn sàng bắt đầu:');
+    console.log('- Tournament 1 - Singles Male: 32/32 teams (APPROVED)');
+    console.log('- Tournament 1 - Singles Female: 24/24 teams (APPROVED)');
+    console.log('- Tournament 1 - Doubles Male: 16/16 teams (APPROVED)');
+    console.log('- Tournament 2 - Singles Male: 24/24 teams (APPROVED)');
+    console.log('\n⏳ Events đang chờ đăng ký thêm:');
+    console.log('- Tournament 1 - Doubles Female: 8/12 teams (APPROVED)');
+    console.log('- Tournament 1 - Doubles Mixed: 15/20 teams (APPROVED)');
+    console.log('- Tournament 2 - Doubles Mixed: 12/16 teams (APPROVED)');
+    console.log('- Tournament 3 - Singles Male: 12/16 teams (APPROVED)');
     
     console.log('\n🔑 Login credentials:');
     console.log('Admin: admin@pickleball.com / password123');
@@ -332,6 +471,16 @@ export class SeedDatabase1700000000000 implements MigrationInterface {
     console.log('Athlete 4: athlete4@pickleball.com / password123');
     console.log('Athlete 5: athlete5@pickleball.com / password123');
     console.log('Athlete 6: athlete6@pickleball.com / password123');
+    console.log('Athlete 7: athlete7@pickleball.com / password123');
+    console.log('Athlete 8: athlete8@pickleball.com / password123');
+    console.log('Athlete 9: athlete9@pickleball.com / password123');
+    console.log('Athlete 10: athlete10@pickleball.com / password123');
+    console.log('Athlete 11: athlete11@pickleball.com / password123');
+    console.log('Athlete 12: athlete12@pickleball.com / password123');
+    console.log('Athlete 13: athlete13@pickleball.com / password123');
+    console.log('Athlete 14: athlete14@pickleball.com / password123');
+    console.log('Athlete 15: athlete15@pickleball.com / password123');
+    console.log('Athlete 16: athlete16@pickleball.com / password123');
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

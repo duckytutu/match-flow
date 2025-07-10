@@ -29,8 +29,7 @@ export class EventRegistration {
   })
   status: EventRegistrationStatus;
 
-  @Column({ nullable: true })
-  teamName: string; // Tên đội
+
 
   @Column({ nullable: true })
   notes: string; // Ghi chú

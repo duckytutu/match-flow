@@ -32,6 +32,7 @@ export default function CreateTournament() {
     description: '',
     location: '',
     startDate: '',
+    endDate: '',
   });
   const [events, setEvents] = useState<Event[]>([
     {
@@ -78,10 +79,19 @@ export default function CreateTournament() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [name]: value
+      };
+      
+      // Auto-fill endDate when startDate is selected
+      if (name === 'startDate' && value) {
+        newData.endDate = value;
+      }
+      
+      return newData;
+    });
   };
 
   const handleEventChange = (index: number, field: keyof Event, value: string | number | undefined) => {
@@ -175,6 +185,17 @@ export default function CreateTournament() {
                   value={formData.startDate}
                   onChange={handleChange}
                   required
+                />
+
+                <Input
+                  type="date"
+                  label="Ngày kết thúc"
+                  name="endDate"
+                  id="endDate"
+                  value={formData.endDate}
+                  onChange={handleChange}
+                  min={formData.startDate}
+                  placeholder="Chọn ngày kết thúc"
                 />
               </div>
 

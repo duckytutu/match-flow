@@ -27,6 +27,4 @@ export class AdminController {
   async rejectUser(@Param('id') id: string) {
     return this.adminService.rejectUser(Number(id));
   }
-
-
 } 

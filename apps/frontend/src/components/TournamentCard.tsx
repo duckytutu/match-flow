@@ -101,9 +101,9 @@ export default function TournamentCard({
         
         <div className={`space-y-2 text-sm ${mutedTextClass}`}>
           <div>📍 {tournament.location}</div>
-          <div>📅 {new Date(tournament.startDate).toLocaleDateString()}</div>
+          <div>📅 Bắt đầu: {new Date(tournament.startDate).toLocaleDateString()}</div>
           {tournament.endDate && (
-            <div>📅 {new Date(tournament.endDate).toLocaleDateString()}</div>
+            <div>📅 Kết thúc: {new Date(tournament.endDate).toLocaleDateString()}</div>
           )}
           
           {variant === 'default' && tournament.currentParticipants !== undefined && (

@@ -21,7 +21,11 @@
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:generate": "npm run typeorm -- migration:generate -d src/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts",
-    "migration:revert": "npm run typeorm -- migration:revert -d src/data-source.ts"
+    "migration:revert": "npm run typeorm -- migration:revert -d src/data-source.ts",
+    "migration:seed": "npm run typeorm -- migration:run -d src/data-source.ts",
+    "seed:run": "npm run typeorm -- migration:run -d src/seeds-data-source.ts",
+    "seed:revert": "npm run typeorm -- migration:revert -d src/seeds-data-source.ts",
+    "seed:generate": "npm run typeorm -- migration:generate -d src/seeds-data-source.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -56,6 +60,7 @@
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "bcrypt": "^6.0.0",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",

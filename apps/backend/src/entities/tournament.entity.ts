@@ -38,6 +38,9 @@ export class Tournament {
   @Column()
   startDate: Date; // Ngày bắt đầu
 
+  @Column({ nullable: true })
+  endDate: Date; // Ngày kết thúc
+
   @Column({
     type: 'enum',
     enum: TournamentStatus,

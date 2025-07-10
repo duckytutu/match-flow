@@ -23,6 +23,7 @@ class CreateTournamentDto {
   description?: string;
   location: string;
   startDate: string;
+  endDate?: string;
   events?: Array<{
     name: string;
     description?: string;
@@ -58,6 +59,7 @@ export class TournamentsController {
           description: 'Annual spring pickleball tournament',
           location: 'City Sports Center',
           startDate: '2025-04-01',
+          endDate: '2025-04-05',
           status: 'draft',
           isApproved: false,
           organizerId: 2,
@@ -90,6 +92,7 @@ export class TournamentsController {
         description: 'Annual spring pickleball tournament',
         location: 'City Sports Center',
         startDate: '2025-04-01T00:00:00.000Z',
+        endDate: '2025-04-05T00:00:00.000Z',
         status: 'draft',
         isApproved: false,
         organizerId: 2,

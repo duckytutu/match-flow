@@ -17,6 +17,7 @@ import { Tournament, TournamentStatus } from '../entities/tournament.entity';
 import { UserRole } from '../entities/user.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 import { Public } from '../auth/roles.decorator';
+import { TournamentBracketsService } from '../tournament-brackets/tournament-brackets.service';
 
 class CreateTournamentDto {
   name: string;
@@ -43,7 +44,10 @@ class CreateTournamentDto {
 @ApiTags('tournaments')
 @Controller('tournaments')
 export class TournamentsController {
-  constructor(private readonly tournamentsService: TournamentsService) {}
+  constructor(
+    private readonly tournamentsService: TournamentsService,
+    private readonly tournamentBracketsService: TournamentBracketsService,
+  ) {}
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -298,5 +302,139 @@ export class TournamentsController {
   })
   requestMoreInfo(@Param('id') id: string, @Body() data: { message?: string }) {
     return this.tournamentsService.requestMoreInfo(Number(id), data.message);
+  }
+
+  @Post(':id/start')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ORGANIZER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Bắt đầu giải đấu (chia bảng, tạo lịch vòng bảng)' })
+  @ApiParam({ name: 'id', description: 'ID của tournament event' })
+  @ApiResponse({
+    status: 200,
+    description: 'Tournament started successfully',
+    schema: {
+      example: {
+        message: 'Tournament started successfully',
+        groups: 8,
+        totalTeams: 32,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Event not found or insufficient teams',
+    schema: {
+      example: {
+        message: 'Event needs 32 teams, but only has 28',
+      },
+    },
+  })
+  async startTournament(@Param('id') eventId: string) {
+    return this.tournamentBracketsService.startTournament(Number(eventId));
+  }
+
+  @Post(':id/knockout')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ORGANIZER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Tạo vòng loại trực tiếp sau khi vòng bảng hoàn thành' })
+  @ApiParam({ name: 'id', description: 'ID của tournament event' })
+  @ApiResponse({
+    status: 200,
+    description: 'Knockout stage created successfully',
+    schema: {
+      example: {
+        message: 'Knockout stage created successfully',
+        teams: 16,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Group stage not completed yet',
+    schema: {
+      example: {
+        message: 'Group stage not completed yet',
+      },
+    },
+  })
+  async createKnockoutStage(@Param('id') eventId: string) {
+    return this.tournamentBracketsService.createKnockoutStage(Number(eventId));
+  }
+
+  @Get(':id/standings')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ORGANIZER, UserRole.ADMIN, UserRole.REFEREE)
+  @ApiOperation({ summary: 'Lấy bảng điểm các bảng đấu của event' })
+  @ApiParam({ name: 'id', description: 'ID của tournament event' })
+  @ApiResponse({
+    status: 200,
+    description: 'Group standings retrieved successfully',
+    schema: {
+      example: [
+        {
+          groupName: 'A',
+          teams: [
+            {
+              position: 1,
+              teamName: 'Nguyễn Văn A / Trần Thị B',
+              player1: 'Nguyễn Văn A',
+              player2: 'Trần Thị B',
+              matchesPlayed: 3,
+              matchesWon: 3,
+              matchesLost: 0,
+              points: 3,
+              setsWon: 6,
+              setsLost: 0,
+              gamesWon: 66,
+              gamesLost: 30,
+            },
+            {
+              position: 2,
+              teamName: 'Lê Văn C / Phạm Thị D',
+              player1: 'Lê Văn C',
+              player2: 'Phạm Thị D',
+              matchesPlayed: 3,
+              matchesWon: 2,
+              matchesLost: 1,
+              points: 2,
+              setsWon: 4,
+              setsLost: 2,
+              gamesWon: 55,
+              gamesLost: 45,
+            },
+          ],
+        },
+      ],
+    },
+  })
+  async getGroupStandings(@Param('id') eventId: string) {
+    return this.tournamentBracketsService.getGroupStandings(Number(eventId));
+  }
+
+  @Post(':id/complete')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ORGANIZER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Hoàn thành giải đấu' })
+  @ApiParam({ name: 'id', description: 'ID của tournament event' })
+  @ApiResponse({
+    status: 200,
+    description: 'Event completed successfully',
+    schema: {
+      example: {
+        message: 'Event completed successfully',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Event not found',
+    schema: {
+      example: {
+        message: 'Event not found',
+      },
+    },
+  })
+  async completeEvent(@Param('id') eventId: string) {
+    return this.tournamentBracketsService.completeEvent(Number(eventId));
   }
 } 

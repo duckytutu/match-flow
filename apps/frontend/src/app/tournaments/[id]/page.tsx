@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/auth';
 interface TournamentEvent {
   id: number;
   type: string;
+  status: string;
   maxTeams: number;
   currentTeams: number;
   entryFee: number;
@@ -59,6 +60,8 @@ export default function TournamentDetail() {
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [startingTournament, setStartingTournament] = useState<number | null>(null);
+  const [completingEvent, setCompletingEvent] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchTournament = async () => {
@@ -87,6 +90,26 @@ export default function TournamentDetail() {
       'doubles_mixed': 'Đôi nam nữ',
     };
     return typeMap[type] || type;
+  };
+
+  const handleStartTournament = async (eventId: number) => {
+    if (!confirm('Bạn có chắc chắn muốn bắt đầu thi đấu? Hành động này sẽ chia bảng và tạo lịch thi đấu.')) {
+      return;
+    }
+
+    setStartingTournament(eventId);
+    try {
+      await apiClient.post(`/tournaments/${eventId}/start`);
+      alert('Thành công!');
+      // Refresh tournament data
+      const response = await apiClient.get(`/tournaments/${params.id}`);
+      setTournament(response.data);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      alert(error.response?.data?.message || 'Có lỗi xảy ra khi bắt đầu giải đấu');
+    } finally {
+      setStartingTournament(null);
+    }
   };
 
   if (loading) {
@@ -197,6 +220,17 @@ export default function TournamentDetail() {
                           <h3 className="text-lg leading-6 font-medium text-gray-900">
                             {getEventTypeLabel(event.type)}
                           </h3>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                              event.status === 'not_started' ? 'bg-gray-100 text-gray-800' :
+                              event.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                              'bg-green-100 text-green-800'
+                            }`}>
+                              {event.status === 'not_started' ? 'Chưa bắt đầu' :
+                               event.status === 'in_progress' ? 'Đang diễn ra' :
+                               'Đã kết thúc'}
+                            </span>
+                          </div>
                         </div>
                         {!user ? (
                           <Link
@@ -213,12 +247,29 @@ export default function TournamentDetail() {
                             Đăng ký
                           </Link>
                         ) : user.role === 'organizer' && user.id === tournament.organizer.id ? (
-                          <Link
-                            href={`/organizer/event-registrations/${event.id}`}
-                            className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700"
-                          >
-                            Quản lý
-                          </Link>
+                          <div className="flex space-x-2">
+                            <Link
+                              href={`/organizer/event-registrations/${event.id}`}
+                              className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700"
+                            >
+                              Quản lý
+                            </Link>
+                            <Link
+                              href={`/tournaments/${tournament.id}/events/${event.id}/manage`}
+                              className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700"
+                            >
+                              Bảng điểm
+                            </Link>
+                            {event.currentTeams >= event.maxTeams && event.status === 'not_started' && (
+                              <button
+                                onClick={() => handleStartTournament(event.id)}
+                                disabled={startingTournament === event.id}
+                                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                              >
+                                {startingTournament === event.id ? 'Đang xử lý...' : 'Bắt đầu thi đấu'}
+                              </button>
+                            )}
+                          </div>
                         ) : null}
                       </div>
                     </div>

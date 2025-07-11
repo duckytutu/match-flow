@@ -60,12 +60,6 @@ export class Match {
   player2Name: string;
 
   @Column({ nullable: true })
-  player3Name: string;
-
-  @Column({ nullable: true })
-  player4Name: string;
-
-  @Column({ nullable: true })
   winner: string;
 
   @Column({ nullable: true })

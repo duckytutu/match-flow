@@ -11,6 +11,7 @@ import {
 import { Tournament } from './tournament.entity';
 import { EventRegistration } from './event-registration.entity';
 import { Match } from './match.entity';
+import { TournamentGroup } from './tournament-group.entity';
 
 export enum EventType {
   SINGLES_MALE = 'singles_male',
@@ -18,6 +19,12 @@ export enum EventType {
   DOUBLES_MALE = 'doubles_male',
   DOUBLES_FEMALE = 'doubles_female',
   DOUBLES_MIXED = 'doubles_mixed',
+}
+
+export enum EventStatus {
+  NOT_STARTED = 'not_started',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
 }
 
 @Entity('tournament_events')
@@ -30,6 +37,13 @@ export class TournamentEvent {
     enum: EventType,
   })
   type: EventType;
+
+  @Column({
+    type: 'enum',
+    enum: EventStatus,
+    default: EventStatus.NOT_STARTED,
+  })
+  status: EventStatus;
 
   @Column({ default: 0 })
   maxTeams: number;
@@ -88,4 +102,7 @@ export class TournamentEvent {
 
   @OneToMany(() => Match, match => match.event)
   matches: Match[];
+
+  @OneToMany(() => TournamentGroup, group => group.event)
+  groups: TournamentGroup[];
 } 

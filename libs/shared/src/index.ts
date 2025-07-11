@@ -37,16 +37,12 @@ export interface Match {
   tournamentId: number;
   player1Id: number;
   player2Id: number;
-  player3Id?: number;
-  player4Id?: number;
   refereeId?: number;
   matchDate: string;
   status: string;
   tournament?: Tournament;
   player1?: User;
   player2?: User;
-  player3?: User;
-  player4?: User;
   referee?: User;
 }
 
@@ -55,8 +51,6 @@ export interface Score {
   matchId: number;
   player1Score: number;
   player2Score: number;
-  player3Score?: number;
-  player4Score?: number;
   match?: Match;
 }
 

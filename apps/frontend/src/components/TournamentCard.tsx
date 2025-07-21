@@ -171,12 +171,9 @@ export default function TournamentCard({
               )}
             </>
           ) : (
-            <Link
-              href={`/tournaments/${tournament.id}`}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-center py-2 px-4 rounded-md text-sm font-medium"
-            >
-              Xem chi tiết
-            </Link>
+            <Button asChild variant="secondary" className="flex-1" size="sm">
+              <Link href={`/tournaments/${tournament.id}`}>Xem chi tiết</Link>
+            </Button>
           )}
         </div>
       </div>

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import apiClient from '@/lib/axios';
 import Navigation from '@/components/Navigation';
 import { useAuthStore } from '@/store/auth';
+import { Button } from '@/components/ui/button';
 
 interface TournamentEvent {
   id: number;
@@ -61,7 +62,6 @@ export default function TournamentDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [startingTournament, setStartingTournament] = useState<number | null>(null);
-  const [completingEvent, setCompletingEvent] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchTournament = async () => {
@@ -248,26 +248,21 @@ export default function TournamentDetail() {
                           </Link>
                         ) : user.role === 'organizer' && user.id === tournament.organizer.id ? (
                           <div className="flex space-x-2">
-                            <Link
-                              href={`/organizer/event-registrations/${event.id}`}
-                              className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700"
-                            >
-                              Quản lý
-                            </Link>
-                            <Link
-                              href={`/tournaments/${tournament.id}/events/${event.id}/manage`}
-                              className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700"
-                            >
-                              Bảng điểm
-                            </Link>
+                            <Button asChild variant="secondary" size="sm">
+                              <Link href={`/organizer/event-registrations/${event.id}`}>Quản lý</Link>
+                            </Button>
+                            <Button asChild variant="secondary" size="sm">
+                              <Link href={`/tournaments/${tournament.id}/events/${event.id}/manage`}>Bảng điểm</Link>
+                            </Button>
                             {event.currentTeams >= event.maxTeams && event.status === 'not_started' && (
-                              <button
+                              <Button
                                 onClick={() => handleStartTournament(event.id)}
                                 disabled={startingTournament === event.id}
-                                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                variant="default"
+                                size="sm"
                               >
                                 {startingTournament === event.id ? 'Đang xử lý...' : 'Bắt đầu thi đấu'}
-                              </button>
+                              </Button>
                             )}
                           </div>
                         ) : null}

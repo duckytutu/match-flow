@@ -6,6 +6,7 @@ import Link from 'next/link';
 import apiClient from '@/lib/axios';
 import Navigation from '@/components/Navigation';
 import { useAuthStore } from '@/store/auth';
+import { Button } from '@/components/ui/button';
 
 interface GroupTeam {
   position: number;
@@ -173,19 +174,19 @@ export default function EventManagement() {
                   </p>
                 </div>
                 <div className="flex space-x-2">
-                  <Link
-                    href={`/tournaments/${params.id}/events/${params.eventId}/matches`}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
-                  >
-                    Quản lý trận đấu
-                  </Link>
-                  <button
+                  <Button asChild variant="secondary" size="sm">
+                    <Link href={`/tournaments/${params.id}/events/${params.eventId}/matches`}>
+                      Quản lý trận đấu
+                    </Link>
+                  </Button>
+                  <Button
                     onClick={handleCreateKnockout}
                     disabled={creatingKnockout}
-                    className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    variant="default"
+                    size="sm"
                   >
                     {creatingKnockout ? 'Đang xử lý...' : 'Tạo vòng loại'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

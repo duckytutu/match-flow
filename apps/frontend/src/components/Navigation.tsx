@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';
+import { Button } from '@/components/ui/button';
 
 export default function Navigation() {
   const { user, logout } = useAuthStore();
@@ -65,27 +66,18 @@ export default function Navigation() {
                 <span className="text-gray-600">
                   Xin chào, {user.firstName} {user.lastName}
                 </span>
-                <button
-                  onClick={logout}
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                >
+                <Button onClick={logout} variant="destructive" size="sm">
                   Đăng xuất
-                </button>
+                </Button>
               </>
             ) : (
               <>
-                <Link
-                  href="/login"
-                  className="text-gray-800 hover:text-gray-600 px-4 py-2 rounded"
-                >
-                  Đăng nhập
-                </Link>
-                <Link
-                  href="/register"
-                  className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                >
-                  Đăng ký
-                </Link>
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/login">Đăng nhập</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href="/register">Đăng ký</Link>
+                </Button>
               </>
             )}
           </div>

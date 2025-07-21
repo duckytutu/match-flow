@@ -197,13 +197,16 @@ export default function EventManagement() {
             
             {standings.length > 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {standings.map((group) => (
-                  <div key={group.groupName} className="bg-white shadow overflow-hidden sm:rounded-lg">
-                    <div className="px-4 py-5 sm:px-6">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        Bảng {group.groupName}
-                      </h3>
-                    </div>
+                {standings
+                  .slice()
+                  .sort((a, b) => a.groupName.localeCompare(b.groupName, 'vi'))
+                  .map((group) => (
+                    <div key={group.groupName} className="bg-white shadow overflow-hidden sm:rounded-lg">
+                      <div className="px-4 py-5 sm:px-6">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                          Bảng {group.groupName}
+                        </h3>
+                      </div>
                     
                     <div className="border-t border-gray-200">
                       <table className="min-w-full divide-y divide-gray-200">

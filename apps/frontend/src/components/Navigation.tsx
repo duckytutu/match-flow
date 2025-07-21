@@ -8,6 +8,7 @@ export default function Navigation() {
   const isAdmin = user?.role === 'admin';
   const isOrganizer = user?.role === 'organizer';
   const isAthlete = user?.role === 'athlete';
+  const isReferee = user?.role === 'referee';
 
   return (
     <nav className="bg-white shadow-lg">
@@ -37,10 +38,15 @@ export default function Navigation() {
                 </Link>
               </>
             )}
-            {isAthlete && (
-              <Link href="/profile/my-registrations" className="text-gray-800 hover:text-gray-600">
-                Đăng ký của tôi
-              </Link>
+            {(isAthlete || isReferee) && (
+              <>
+                <Link href="/profile/my-registrations" className="text-gray-800 hover:text-gray-600">
+                  Đăng ký của tôi
+                </Link>
+                <Link href="/matches/my-assignments" className="text-gray-800 hover:text-gray-600">
+                  Trận đấu được giao
+                </Link>
+              </>
             )}
             {isAdmin && (
               <>

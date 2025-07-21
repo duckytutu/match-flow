@@ -48,6 +48,20 @@ export class TournamentBracketsService {
       throw new Error(`Event needs ${event.maxTeams} teams, but only has ${event.currentTeams}`);
     }
 
+    // Integrity check: ensure no athlete appears in more than one registration for this event
+    const userIdCount: Record<number, number> = {};
+    for (const reg of event.registrations) {
+      userIdCount[reg.userId] = (userIdCount[reg.userId] || 0) + 1;
+      if (reg.teammateId) {
+        userIdCount[reg.teammateId] = (userIdCount[reg.teammateId] || 0) + 1;
+      }
+    }
+    const duplicateUserIds = Object.entries(userIdCount).filter(([_, count]) => count > 1);
+    if (duplicateUserIds.length > 0) {
+      const ids = duplicateUserIds.map(([id]) => id).join(', ');
+      throw new Error(`Data integrity error: Athlete(s) with userId(s) ${ids} appear in multiple registrations for this event.`);
+    }
+
     // Lấy danh sách các đội đã được approve
     const approvedRegistrations = event.registrations.filter(
       reg => reg.status === 'approved'
@@ -174,6 +188,7 @@ export class TournamentBracketsService {
            match.type = this.getMatchType(team1.registration, team2.registration);
            match.player1Name = this.getTeamName(team1.registration);
            match.player2Name = this.getTeamName(team2.registration);
+           match.groupId = group.id;
            // scheduledTime và courtNumber sẽ được set sau
            match.notes = `Group ${group.name} - ${team1.registration.user.firstName} ${team1.registration.user.lastName} vs ${team2.registration.user.firstName} ${team2.registration.user.lastName}`;
 

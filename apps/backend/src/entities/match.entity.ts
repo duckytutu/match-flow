@@ -11,6 +11,7 @@ import {
 import { User } from './user.entity';
 import { TournamentEvent } from './tournament-event.entity';
 import { Score } from './score.entity';
+import { TournamentGroup } from './tournament-group.entity';
 
 export enum MatchStatus {
   SCHEDULED = 'scheduled',
@@ -85,6 +86,13 @@ export class Match {
 
   @Column({ nullable: true })
   refereeId: number;
+
+  @ManyToOne(() => TournamentGroup, group => group.id, { nullable: true })
+  @JoinColumn({ name: 'groupId' })
+  group: TournamentGroup;
+
+  @Column({ nullable: true })
+  groupId: number;
 
   @OneToMany(() => Score, score => score.match)
   scores: Score[];

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth';
-import Navigation from '@/components/Navigation';
+import { Navigation } from '@/components';
 
 export default function Dashboard() {
   const { loading, user } = useAuthStore();

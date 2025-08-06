@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import apiClient from '@/lib/axios';
-import Navigation from '@/components/Navigation';
+import { Navigation } from '@/components';
 import { useAuthStore } from '@/store/auth';
 import { Button } from '@/components/ui/button';
 

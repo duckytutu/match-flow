@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import apiClient from '@/lib/axios';
-import Navigation from '@/components/Navigation';
+import { Navigation } from '@/components';
 
 interface PendingUser {
   id: number;

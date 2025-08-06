@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/auth';
 import { Button } from '@/components/ui/button';
 import axios from '@/lib/axios';
-import Navigation from '@/components/Navigation';
+import { Navigation } from '@/components';
 
 interface Score {
   id: number;

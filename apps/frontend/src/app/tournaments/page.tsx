@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import apiClient from '@/lib/axios';
-import Navigation from '@/components/Navigation';
-import TournamentCard from '@/components/TournamentCard';
+import { Navigation } from '@/components';
+import { TournamentCard } from '@/components';
 import { useAuthStore } from '@/store/auth';
 
 interface Tournament {

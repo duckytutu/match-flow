@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { AsyncSelectComponent } from '@/components/ui/async-select';
 import { Modal } from '@/components/ui/modal';
 import { Toast } from '@/components/ui/toast';
-import Navigation from '@/components/Navigation';
+import { Navigation } from '@/components';
 import { useAuthStore } from '@/store/auth';
 
 interface TournamentEvent {

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import Navigation from '@/components/Navigation';
+import { Navigation } from '@/components';
 
 interface Event {
   type: string;

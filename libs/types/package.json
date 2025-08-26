@@ -1,0 +1,12 @@
+{
+  "name": "@pickleball-poc/types",
+  "version": "0.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10"
+  }
+}

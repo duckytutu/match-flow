@@ -22,5 +22,8 @@ export { TournamentForm } from './forms/TournamentForm';
 // Modal components
 export { ConfirmModal } from './modals/ConfirmModal';
 
+// UI components
+export { Badge } from './ui/badge';
+
 // Legacy exports for backward compatibility
 export { default as TournamentCardLegacy } from './TournamentCard'; 

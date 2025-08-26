@@ -18,7 +18,9 @@
       "@pickleball-poc/shared": ["libs/shared/src/index.ts"],
       "@pickleball-poc/shared/*": ["libs/shared/src/*"],
       "@pickleball-poc/ui": ["libs/ui/src/index.ts"],
-      "@pickleball-poc/ui/*": ["libs/ui/src/*"]
+      "@pickleball-poc/ui/*": ["libs/ui/src/*"],
+      "@pickleball-poc/types": ["libs/types/src/index.ts"],
+      "@pickleball-poc/types/*": ["libs/types/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -28,6 +28,7 @@
     "seed:generate": "npm run typeorm -- migration:generate -d src/seeds-data-source.ts"
   },
   "dependencies": {
+    "@pickleball-poc/types": "*",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",

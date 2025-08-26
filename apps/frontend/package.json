@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@pickleball-poc/types": "*",
     "@radix-ui/react-slot": "^1.2.3",
     "@tanstack/react-query": "^5.81.5",
     "autoprefixer": "^10.4.21",

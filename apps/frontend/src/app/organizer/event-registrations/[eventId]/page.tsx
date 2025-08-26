@@ -5,6 +5,9 @@ import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import { ReactSelect } from '@/components/ui/react-select';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import axios from '@/lib/axios';
 
 interface User {
@@ -66,6 +69,11 @@ export default function EventRegistrationsPage() {
   const [event, setEvent] = useState<TournamentEvent | null>(null);
   const [availableReferees, setAvailableReferees] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Filter states for registrations
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchFilter, setSearchFilter] = useState<string>('');
+  const [sortBy, setSortBy] = useState<string>('name');
   
   // Modal states
   const [showAssignRefereeModal, setShowAssignRefereeModal] = useState(false);
@@ -150,34 +158,70 @@ export default function EventRegistrationsPage() {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { label: 'Chờ duyệt', className: 'bg-yellow-100 text-yellow-800' },
-      approved: { label: 'Đã duyệt', className: 'bg-green-100 text-green-800' },
-      rejected: { label: 'Từ chối', className: 'bg-red-100 text-red-800' },
-      cancelled: { label: 'Đã hủy', className: 'bg-gray-100 text-gray-800' },
+      pending: { label: 'Chờ duyệt', variant: 'secondary' as const },
+      approved: { label: 'Đã duyệt', variant: 'default' as const },
+      rejected: { label: 'Từ chối', variant: 'destructive' as const },
+      cancelled: { label: 'Đã hủy', variant: 'outline' as const },
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${config.className}`}>
+      <Badge variant={config.variant}>
         {config.label}
-      </span>
+      </Badge>
     );
   };
 
   const getMatchStatusBadge = (status: string) => {
     const statusConfig = {
-      scheduled: { label: 'Chờ thi đấu', className: 'bg-blue-100 text-blue-800' },
-      in_progress: { label: 'Đang thi đấu', className: 'bg-yellow-100 text-yellow-800' },
-      completed: { label: 'Đã hoàn thành', className: 'bg-green-100 text-green-800' },
-      cancelled: { label: 'Đã hủy', className: 'bg-red-100 text-red-800' },
+      scheduled: { label: 'Chờ thi đấu', variant: 'secondary' as const },
+      in_progress: { label: 'Đang thi đấu', variant: 'secondary' as const },
+      completed: { label: 'Đã hoàn thành', variant: 'default' as const },
+      cancelled: { label: 'Đã hủy', variant: 'destructive' as const },
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.scheduled;
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${config.className}`}>
+      <Badge variant={config.variant}>
         {config.label}
-      </span>
+      </Badge>
     );
+  };
+
+  // Filter and sort registrations based on current filters
+  const filteredRegistrations = registrations
+    .filter((registration) => {
+      const matchesStatus = statusFilter === 'all' || registration.status === statusFilter;
+      const matchesSearch = searchFilter === '' || 
+        registration.user.firstName.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        registration.user.lastName.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        registration.user.email.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        (registration.teammate && (
+          registration.teammate.firstName.toLowerCase().includes(searchFilter.toLowerCase()) ||
+          registration.teammate.lastName.toLowerCase().includes(searchFilter.toLowerCase())
+        ));
+      
+      return matchesStatus && matchesSearch;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return `${a.user.firstName} ${a.user.lastName}`.localeCompare(`${b.user.firstName} ${b.user.lastName}`);
+        case 'status':
+          return a.status.localeCompare(b.status);
+        case 'date':
+          // Assuming there's a createdAt field, fallback to name if not available
+          return `${a.user.firstName} ${a.user.lastName}`.localeCompare(`${b.user.firstName} ${b.user.lastName}`);
+        default:
+          return 0;
+      }
+    });
+
+  // Clear all filters
+  const clearFilters = () => {
+    setStatusFilter('all');
+    setSearchFilter('');
+    setSortBy('name');
   };
 
   if (loading) {
@@ -226,43 +270,177 @@ export default function EventRegistrationsPage() {
       {/* Registrations Tab */}
       {activeTab === 'registrations' && (
         <div className="space-y-6">
-          {registrations.map((registration) => (
-            <div key={registration.id} className="bg-white shadow rounded-lg p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">
-                    {registration.user.firstName} {registration.user.lastName}
-                  </h3>
-                  <p className="text-gray-600">{registration.user.email}</p>
-                  {registration.teammate && (
-                    <p className="text-gray-600">
-                      Đồng đội: {registration.teammate.firstName} {registration.teammate.lastName}
-                    </p>
-                  )}
+          {/* Stats Section */}
+          <div className="bg-white shadow rounded-lg p-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Thống kê đăng ký</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">
+                  {registrations.filter(r => r.status === 'pending').length}
                 </div>
-                <div className="flex items-center space-x-4">
-                  {getStatusBadge(registration.status)}
-                  {registration.status === 'pending' && (
-                    <div className="flex space-x-2">
-                      <Button
-                        onClick={() => handleApproveRegistration(registration.id)}
-                        size="sm"
-                      >
-                        Duyệt
-                      </Button>
-                      <Button
-                        onClick={() => handleRejectRegistration(registration.id)}
-                        variant="destructive"
-                        size="sm"
-                      >
-                        Từ chối
-                      </Button>
-                    </div>
-                  )}
+                <div className="text-sm text-gray-600">Chờ duyệt</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {registrations.filter(r => r.status === 'approved').length}
                 </div>
+                <div className="text-sm text-gray-600">Đã duyệt</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">
+                  {registrations.filter(r => r.status === 'rejected').length}
+                </div>
+                <div className="text-sm text-gray-600">Từ chối</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-600">
+                  {registrations.filter(r => r.status === 'cancelled').length}
+                </div>
+                <div className="text-sm text-gray-600">Đã hủy</div>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Filter Section */}
+          <div className="bg-white shadow rounded-lg p-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-end">
+              <div className="flex-1">
+                <Input
+                  label="Tìm kiếm"
+                  type="text"
+                  placeholder="Tìm theo tên, email..."
+                  value={searchFilter}
+                  onChange={(e) => setSearchFilter(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div className="w-full sm:w-48">
+                <Select
+                  label="Trạng thái"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  options={[
+                    { value: 'all', label: 'Tất cả' },
+                    { value: 'pending', label: 'Chờ duyệt' },
+                    { value: 'approved', label: 'Đã duyệt' },
+                    { value: 'rejected', label: 'Từ chối' },
+                    { value: 'cancelled', label: 'Đã hủy' }
+                  ]}
+                />
+              </div>
+              
+              <div className="w-full sm:w-48">
+                <Select
+                  label="Sắp xếp theo"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  options={[
+                    { value: 'name', label: 'Tên' },
+                    { value: 'status', label: 'Trạng thái' },
+                    { value: 'date', label: 'Ngày đăng ký' }
+                  ]}
+                />
+              </div>
+              
+              <Button
+                onClick={clearFilters}
+                variant="outline"
+                size="lg"
+                className="whitespace-nowrap"
+              >
+                Xóa bộ lọc
+              </Button>
+            </div>
+            
+            {/* Filter Summary */}
+            {(statusFilter !== 'all' || searchFilter !== '' || sortBy !== 'name') && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
+                  <span>Bộ lọc:</span>
+                  {statusFilter !== 'all' && (
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                      Trạng thái: {statusFilter === 'pending' ? 'Chờ duyệt' : 
+                                   statusFilter === 'approved' ? 'Đã duyệt' : 
+                                   statusFilter === 'rejected' ? 'Từ chối' : 'Đã hủy'}
+                    </span>
+                  )}
+                  {searchFilter !== '' && (
+                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                      Tìm kiếm: &ldquo;{searchFilter}&rdquo;
+                    </span>
+                  )}
+                  {sortBy !== 'name' && (
+                    <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
+                      Sắp xếp: {sortBy === 'status' ? 'Trạng thái' : 'Ngày đăng ký'}
+                    </span>
+                  )}
+                  <span className="text-gray-500">
+                    ({filteredRegistrations.length} kết quả)
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Registrations List */}
+          <div className="space-y-4">
+            {filteredRegistrations.length === 0 ? (
+              <div className="bg-white shadow rounded-lg p-8 text-center">
+                <p className="text-gray-500 text-lg">
+                  {registrations.length === 0 ? 'Chưa có đăng ký nào' : 'Không tìm thấy kết quả phù hợp'}
+                </p>
+                {registrations.length > 0 && (
+                  <p className="text-gray-400 mt-2">
+                    Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
+                  </p>
+                )}
+                {registrations.length === 0 && (
+                  <p className="text-gray-400 mt-2">
+                    Vận động viên có thể đăng ký tham gia sự kiện này
+                  </p>
+                )}
+              </div>
+            ) : (
+              filteredRegistrations.map((registration) => (
+                <div key={registration.id} className="bg-white shadow rounded-lg p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-900">
+                        {registration.user.firstName} {registration.user.lastName}
+                      </h3>
+                      <p className="text-gray-600">{registration.user.email}</p>
+                      {registration.teammate && (
+                        <p className="text-gray-600">
+                          Đồng đội: {registration.teammate.firstName} {registration.teammate.lastName}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      {getStatusBadge(registration.status)}
+                      {registration.status === 'pending' && (
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={() => handleApproveRegistration(registration.id)}
+                            size="sm"
+                          >
+                            Duyệt
+                          </Button>
+                          <Button
+                            onClick={() => handleRejectRegistration(registration.id)}
+                            variant="destructive"
+                            size="sm"
+                          >
+                            Từ chối
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       )}
 

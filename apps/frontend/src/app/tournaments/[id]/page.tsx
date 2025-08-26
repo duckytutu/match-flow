@@ -7,6 +7,7 @@ import apiClient from '@/lib/axios';
 import { Navigation } from '@/components';
 import { useAuthStore } from '@/store/auth';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface TournamentEvent {
   id: number;
@@ -158,19 +159,22 @@ export default function TournamentDetail() {
                 </div>
                 <div className="flex space-x-2">
                   { user?.role === 'admin' ? (
-                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${
-                    tournament.isApproved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {tournament.isApproved ? 'Đã phê duyệt' : 'Chờ phê duyệt'}
-                  </span>
+                    <Badge variant={tournament.isApproved ? 'success' : 'warning'} className="text-sm px-3 py-1">
+                      {tournament.isApproved ? 'Đã phê duyệt' : 'Chờ phê duyệt'}
+                    </Badge>
                   ) : (
-                    <span className={`px-3 py-1 text-sm font-medium rounded-full ${
-                      tournament.status === 'published' ? 'bg-green-100 text-green-800' :
-                      tournament.status === 'draft' ? 'bg-gray-100 text-gray-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {tournament.status}
-                    </span>
+                    <Badge 
+                      variant={
+                        tournament.status === 'published' ? 'success' :
+                        tournament.status === 'draft' ? 'gray' :
+                        'warning'
+                      } 
+                      className="text-sm px-3 py-1"
+                    >
+                      {tournament.status === 'published' ? 'Đã xuất bản' :
+                       tournament.status === 'draft' ? 'Bản nháp' :
+                       tournament.status}
+                    </Badge>
                   )}
                 </div>
               </div>
@@ -221,15 +225,18 @@ export default function TournamentDetail() {
                             {getEventTypeLabel(event.type)}
                           </h3>
                           <div className="flex items-center space-x-2 mt-1">
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                              event.status === 'not_started' ? 'bg-gray-100 text-gray-800' :
-                              event.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>
+                            <Badge 
+                              variant={
+                                event.status === 'not_started' ? 'gray' :
+                                event.status === 'in_progress' ? 'info' :
+                                'success'
+                              }
+                              className="text-xs px-2 py-1"
+                            >
                               {event.status === 'not_started' ? 'Chưa bắt đầu' :
                                event.status === 'in_progress' ? 'Đang diễn ra' :
                                'Đã kết thúc'}
-                            </span>
+                            </Badge>
                           </div>
                         </div>
                         {!user ? (
@@ -321,13 +328,21 @@ export default function TournamentDetail() {
                                     </span>
                                   )}
                                 </span>
-                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                                  registration.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                  registration.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-red-100 text-red-800'
-                                }`}>
-                                  {registration.status}
-                                </span>
+                                <Badge 
+                                  variant={
+                                    registration.status === 'approved' ? 'success' :
+                                    registration.status === 'pending' ? 'warning' :
+                                    registration.status === 'rejected' ? 'destructive' :
+                                    'gray'
+                                  }
+                                  className="text-xs px-2 py-1"
+                                >
+                                  {registration.status === 'approved' ? 'Đã duyệt' :
+                                   registration.status === 'pending' ? 'Chờ duyệt' :
+                                   registration.status === 'rejected' ? 'Từ chối' :
+                                   registration.status === 'cancelled' ? 'Đã huỷ' : 
+                                   registration.status}
+                                </Badge>
                               </li>
                             ))}
                           </ul>
